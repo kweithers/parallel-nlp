@@ -25,3 +25,17 @@ This problem is embarassingly parallel. Each book can be assigned to a goroutine
 To do this, we need to wait until all of the workers are finished counting their individual documents, and then we know how many documents each word appears in.
 
 Once we know for each word how many documents it appears in, we can calculate the tfidf for each word. 
+
+
+## How to run the program
+
+0. cd into the proj3 directory
+
+1. invoke ```go run main.go``` with the following 3 command line arguments
+  * n_threads: the number of worker goroutines to create. if this is equal to 1, run the serial version
+  * n_books: how many of our 1000 books to run the process on (Note: ensure that n_books / n_threads is an integer)
+  * save_reults: 0 if you don't want to save results, 1 if you want to save results
+
+## View the output
+
+If you want to compare and do some analysis on these vectors, they will be stored in the tfidf folder.
