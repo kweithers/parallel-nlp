@@ -4,7 +4,7 @@
 
 A ![bag-of-words](https://en.wikipedia.org/wiki/Bag-of-words_model) model can be used to create a feature vector that describes a document. It simply counts how many times each word occurs in a document. For example, the document "John likes to watch movies. Mary likes movies too." has the vector ```{"John":1,"likes":2,"to":1,"watch":1,"movies":2,"Mary":1,"too":1}```.
 
-![Term frequency-inverse document frequency (tf-idf)](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) takes this one step further. It is a slightly more sophisticated statistic that can be used to represent how important certain words are to a document. Instead of simply counting how many times a word appears, we include another term called *inverse document frequency*. It accounts for what percentage of *documents* in a collection of documents a word appears. This way common words like 'the' and 'an' get a small weight since they appear in every document, but rarer words get a bigger weight since they are more likely to be important. To get the tf-idf for a word in a document, we simply multiply the term frequency (same as the bag-of-words, just count how many times a word appears in a document) by the inverse document frequency.
+![Term frequency-inverse document frequency (tf-idf)](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) takes this one step further. It is a slightly more sophisticated statistic that can be used to represent how important certain words are to a document. Instead of simply counting how many times a word appears, we include another term called *inverse document frequency*. It accounts for what *percentage of documents in a collection of documents* a word appears. This way common words like 'the' and 'an' get a small weight since they appear in every document, but rarer words get a bigger weight since they are more likely to be important. To get the tf-idf for a word in a document, we simply multiply the term frequency (same as the bag-of-words, just count how many times a word appears in a document) by the inverse document frequency.
 
 I want to create the tf-idf vector for many documents as quickly as possible. For each document, the result will be a vector representing the tf-idfs of the ![most common 10,000 words](https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english.txt).
 
@@ -48,4 +48,8 @@ I ran these benchmarks on my 2019 MacBook Pro with the following specs
 
 The number of documents doesn't seem to have a huge impact on the speedup itself. However, the speedup flattens out after 6, which is equal to the number of cores on my machine, which makes sense. Even though hyperthreading is enabled, it seems to not have an effect here.
 
-Parallel programming was able to provide some nice speeedup for this use case!
+One possible thing is limiting the performance is the fact that we have to wait for the groups of threads to finish after the 3 main steps: 1. Calculating Term Frequencies 2. Calculating Inverse Document Frequencies 3. Calculating TF-IDFs. Unfortunately there is no way around this since each step depends on the result of the previous step. 
+
+Also, ideally each worker will be assigned a similar amount of work, but I didn't do anything to ensure that this is the case. One worker might get a bunch of huge books and another might get a bunch of small books and finish well before the other thread and just have to wait around doing nothing. Something like assigning the books to the workers one by one, or implementing some work balancing would definitely be worth implementing if we really needed more performance.
+
+In conclusion, parallel programming was able to provide a nice speeedup. This repository provides a great base for future projects in the NLP space.
