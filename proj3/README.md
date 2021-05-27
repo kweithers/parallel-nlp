@@ -31,7 +31,7 @@ Finally, we calculate the tf-idf for each word in each document by multiplying t
 1. cd into the books directory, then call ``` bash ./get_books.sh``` to download the books
 
 2. cd back into the proj3 directory, then call ```go run main.go <n_threads> <n_books> <save_results>```
-  * n_threads: the number of worker goroutines to create. if this is equal to 1, run the serial version
+  * n_threads: the number of worker goroutines to create. if this is equal to 1, it runs the serial version
   * n_books: how many of our 1000 books to run the process on (note: ensure that n_books / n_threads is an integer)
   * save_reults: 0 if you don't want to save results, 1 if you want to save results into the tfidf folder
 
@@ -46,7 +46,7 @@ I ran these benchmarks on my 2019 MacBook Pro with the following specs
 * Processor: 2.6 GHz 6-Core Intel Core i7
 * RAM: 16 GB 2667 MHz DDR4
 
-The number of documents doesn't seem to have a huge impact on the speedup itself. However, the speedup flattens out after 6, which is equal to the number of cores on my machine, which makes sense. Even though hyperthreading is enabled, it seems to not have an effect here.
+The number of documents doesn't seem to have a huge impact on the speedup itself. However, the speedup flattens out after 6 threads, which is equal to the number of cores on my machine, which makes sense. Even though hyperthreading is enabled, it seems to not have an effect here.
 
 One possible thing is limiting the performance is the fact that we have to wait for the groups of threads to finish after the 3 main steps: 1. Calculating Term Frequencies 2. Calculating Inverse Document Frequencies 3. Calculating TF-IDFs. Unfortunately there is no way around this since each step depends on the result of the previous step. 
 
