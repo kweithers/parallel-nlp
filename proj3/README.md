@@ -28,12 +28,13 @@ Finally, we calculate the tf-idf for each word in each document by multiplying t
 
 0. cd into the proj3 directory
 
-1. cd into the books directory, then call ``` bash ./get_books.sh``` to download the books
+1. cd into the books directory, then call ``` bash ./get_books.sh``` to download the books. You can interrupt this at any time with control-C if you don't wanna sit around waiting for all 1000 books to download.
 
 2. cd back into the proj3 directory, then call ```go run main.go <n_threads> <n_books> <save_results>```
   * n_threads: the number of worker goroutines to create. if this is equal to 1, it runs the serial version
   * n_books: how many of our 1000 books to run the process on (note: ensure that n_books / n_threads is an integer)
   * save_reults: 0 if you don't want to save results, 1 if you want to save results into the tfidf folder
+  * NOTE: On the CS cluster, I did have to call ```module load golang/1.16.2``` before running ```main.go```
 
 3. if you want to produce your own speedup graph, call ```python timings.py```
 
