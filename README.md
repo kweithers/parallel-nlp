@@ -20,6 +20,8 @@ This problem is embarassingly parallel. Each book can be assigned to a goroutine
 
 ## Term frequency-inverse document frequency 
 
-![Term frequency-inverse document frequency (tf-idf)](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) takes this one step further. It is a slightly more sophisticated statistic that can be used to represent how important certain words are to a document. Instead of simply counting how many times a word appears, we include a term that accounts for the number of *documents* it appears in as well. This way common words like 'the' 'an' don't get a big weight since they appear in every document, but rarer words get a bigger weight since they are more likely to be important.
+![Term frequency-inverse document frequency (tf-idf)](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) takes this one step further. It is a slightly more sophisticated statistic that can be used to represent how important certain words are to a document. Instead of simply counting how many times a word appears, we include another term called *inverse document frequency*. It accounts for what percentage of our documents of *documents* it appears in as well. This way common words like 'the' 'an' don't get a big weight since they appear in every document, but rarer words get a bigger weight since they are more likely to be important.
 
 To do this, we need to wait until all of the workers are finished counting their individual documents, and then we know how many documents each word appears in.
+
+Once we know for each word how many documents it appears in, we can calculate the tfidf for each word. 

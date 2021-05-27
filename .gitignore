@@ -11,6 +11,7 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 proj3/books/*.txt
+proj3/tfidf/*.txt
 !google-10000-english.txt
 
 # Dependency directories (remove the comment below to include it)

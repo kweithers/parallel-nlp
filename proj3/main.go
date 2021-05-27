@@ -44,7 +44,7 @@ func IDFWorker(words []string, vectors []*map[string]float64, df []float64, idf 
 	}
 }
 
-func TFIDFWorker(words []string, vectors []*map[string]float64, df []float64, idf []float64, start int, end int, n_books int, tfidf [][]float64, wg *sync.WaitGroup) {
+func TFIDFWorker(words []string, vectors []*map[string]float64, df []float64, idf []float64, start int, end int, n_books int, tfidf [][]float64, wg *sync.WaitGroup, save_results int) {
 	defer wg.Done()
 	//For every document
 	for b := start; b < end; b++ {
@@ -56,21 +56,36 @@ func TFIDFWorker(words []string, vectors []*map[string]float64, df []float64, id
 		}
 		//Append the result
 		tfidf[b] = this_book
-		if b == 100 {
-			fmt.Println(this_book)
+		//Save the result
+		if save_results > 0 {
+			printLines("tfidf/"+strconv.Itoa(b)+".txt", this_book)
 		}
 	}
 }
 
+func printLines(filePath string, values []float64) error {
+	f, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	for _, value := range values {
+		fmt.Fprintln(f, value) // print values to f, one per line
+	}
+	return nil
+}
+
 func main() {
-	if len(os.Args) != 3 {
+	if len(os.Args) != 4 {
 		fmt.Println("ERROR: Wrong number of command line arguments")
-		fmt.Println("Usage ./bagOfWords <n_threads> <n_books>")
+		fmt.Println("Usage ./bagOfWords <n_threads> <n_books> <save_results>")
 		fmt.Println("n_threads of 1 will run a serial version")
+		fmt.Println("Enter 0 to not save results, enter 1 to save resulting vectors in the tfidf folder")
 		return
 	}
 	n_threads, _ := strconv.Atoi(os.Args[1])
 	n_books, _ := strconv.Atoi(os.Args[2])
+	save_results, _ := strconv.Atoi(os.Args[3])
 
 	//Read the 10000 most common words
 	file, err := os.Open("google-10000-english.txt")
@@ -88,7 +103,6 @@ func main() {
 	vectors := make([]*map[string]float64, n_books)
 	df := make([]float64, len(words))
 	idf := make([]float64, len(words))
-	// var tfidf [][]float64
 	tfidf := make([][]float64, n_books)
 
 	//Get our directory of books
@@ -136,8 +150,9 @@ func main() {
 			}
 			//Append the result
 			tfidf[b] = this_book
-			if b == 100 {
-				fmt.Println(this_book)
+			//Save the result
+			if save_results > 0 {
+				printLines("tfidf/"+strconv.Itoa(b)+".txt", this_book)
 			}
 		}
 
@@ -160,7 +175,7 @@ func main() {
 
 		for i := 0; i < n_threads; i++ {
 			wg.Add(1)
-			go TFIDFWorker(words, vectors, df, idf, i*work, (i+1)*work, n_books, tfidf, &wg)
+			go TFIDFWorker(words, vectors, df, idf, i*work, (i+1)*work, n_books, tfidf, &wg, save_results)
 		}
 		wg.Wait()
 
